@@ -1,0 +1,7 @@
+chart_repo_url: https://codecentric.github.io/helm-charts
+chart_version: 2.3.0
+
+chart_release_name: keycloakx
+target_namespace: keycloakx
+
+chart_values: {}

@@ -1,0 +1,9 @@
+- name: Install keycloak chart
+  kubernetes.core.helm:
+    chart_repo_url: "{{ chart_repo_url }}"
+    chart_ref: keycloakx
+    chart_version: "{{ chart_version }}"
+    create_namespace: true
+    release_name: "{{ chart_release_name }}"
+    release_namespace: "{{ target_namespace }}"
+    release_values: "{{ chart_values }}"
