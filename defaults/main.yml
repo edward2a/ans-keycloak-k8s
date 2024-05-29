@@ -4,4 +4,51 @@ chart_version: 2.3.0
 chart_release_name: keycloakx
 target_namespace: keycloakx
 
-chart_values: {}
+ingress_hostname: "sso.{{ base_url }}"
+
+chart_values:
+  command:
+  - "/opt/keycloak/bin/kc.sh"
+  - "start"
+  - "--http-enabled=true"
+  - "--http-port=8080"
+  - "--hostname-strict=false"
+  - "--hostname-strict-https=false"
+  extraEnv: |
+    - name: KEYCLOAK_ADMIN
+      value: admin
+    - name: KEYCLOAK_ADMIN_PASSWORD
+      value: admin
+    - name: JAVA_OPTS_APPEND
+      value: >-
+        -Djgroups.dns.query={% raw %}{{ include "keycloak.fullname" . }}{% endraw %}-headless
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      nginx.ingress.kubernetes.io/affinity: cookie
+    host: "{{ ingress_hostname }}"
+    tls:
+    - hosts:
+      - "{{ ingress_hostname }}"
+    rules:
+    - host: "{{ ingress_hostname }}"
+      paths:
+      - path: '{% raw %}{{ tpl .Values.http.relativePath $ | trimSuffix "/" }}/{% endraw %}'
+        pathType: Prefix
+
+    console:
+      enabled: true
+      ingressClassName: nginx
+      annotations:
+        nginx.ingress.kubernetes.io/affinity: cookie
+      host: "{{ ingress_hostname }}"
+      tls:
+      - hosts:
+        - "{{ ingress_hostname }}"
+      rules:
+      - host: "{{ ingress_hostname }}"
+        paths:
+        - path: '{% raw %}{{ tpl .Values.http.relativePath $ | trimSuffix "/" }}/admin{% endraw %}'
+          pathType: Prefix
+
