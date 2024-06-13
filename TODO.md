@@ -1,0 +1,2 @@
+- Configure ingress to expose admin console only internally
+- Confiugre ingress to limit external access to required endpoints
